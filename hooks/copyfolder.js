@@ -62,7 +62,7 @@ module.exports = function (context) {
         }
         srcFolder = path.join(context.opts.projectRoot, projectName + ' Stickers/');
         if (!fs.existsSync(srcFolder)) {
-            throw new Error('Missing stickers asset folder. Should be named "/<PROJECTNAME> Stickers/ and place it in the root folder of your cordova project"');
+            throw new Error('Missing stickers asset folder. Should be named "/<PROJECTNAME>Stickers/ and place it in the root folder of your cordova project"');
         }
 
 
