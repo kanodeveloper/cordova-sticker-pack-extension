@@ -345,29 +345,30 @@ module.exports = function (context) {
 
             //check if already exists
             var file = new pbxFile(resourceFileName, {});
-            if (pbxProject.hasFile(file.path)) return false;
+            if (pbxProject.hasFile(file.path) == false )
+            {
+                addStickersTarget(pbxProject, stickerPackName + ".appex", bundleId, stickerPackName);
 
-            addStickersTarget(pbxProject, stickerPackName + ".appex", bundleId, stickerPackName);
+                stickersKey = addStickerResourceFile(pbxProject, resourceFileName, {}, stickerPackName, projectName);
 
-            stickersKey = addStickerResourceFile(pbxProject, resourceFileName, {}, stickerPackName, projectName);
+                // cordova makes a CustomTemplate pbxgroup, the stickersGroup must be added there
+                var customTemplateKey = pbxProject.findPBXGroupKey({
+                    name: "CustomTemplate"
+                });
+                if (customTemplateKey) {
+                    pbxProject.addToPbxGroup(stickersKey, customTemplateKey);
+                }
 
-            // cordova makes a CustomTemplate pbxgroup, the stickersGroup must be added there
-            var customTemplateKey = pbxProject.findPBXGroupKey({
-                name: "CustomTemplate"
-            });
-            if (customTemplateKey) {
-                pbxProject.addToPbxGroup(stickersKey, customTemplateKey);
+
+                configGroups = pbxProject.hash.project.objects.XCBuildConfiguration;
+                for (var key in configGroups) {
+                    config = configGroups[key];
+                }
+
+                // write the updated project file
+                fs.writeFileSync(projectPath, pbxProject.writeSync());
+                console.error("Added Stickers Extension to " + projectName + " xcode project");
             }
-
-
-            configGroups = pbxProject.hash.project.objects.XCBuildConfiguration;
-            for (var key in configGroups) {
-                config = configGroups[key];
-            }
-
-            // write the updated project file
-            fs.writeFileSync(projectPath, pbxProject.writeSync());
-            console.error("Added Stickers Extension to " + projectName + " xcode project");
 
             deferral.resolve();
         };
