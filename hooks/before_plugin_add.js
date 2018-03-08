@@ -1,7 +1,6 @@
-console.error("Start copying sticker folder");
 var fs = require('fs');
 var path = require('path');
-// http://stackoverflow.com/a/26038979/5930772
+
 var copyFileSync = function (source, target) {
 
     var targetFile = target;
@@ -71,7 +70,7 @@ module.exports = function (context) {
             srcFolder,
             path.join(context.opts.projectRoot, 'platforms', 'ios')
         );
-        console.error("Copied Stickers folder");
+
         deferral.resolve();
     });
 

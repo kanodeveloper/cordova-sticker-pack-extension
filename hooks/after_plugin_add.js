@@ -1,13 +1,15 @@
-console.error("Running stickers hook");
-
-// note: I have no idea how to make a cordova plugin perform an npm install, so I simply included my fork of node-xcode in node_modules
 var xcode = require('xcode');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
-var pbxFile = require('./pbxFile');
+var pbxFile = require('./lib/pbxFile');
 
 module.exports = function (context) {
+
+    var platforms = context.opts.cordova.platforms;
+
+    if (platforms.indexOf("ios") === -1) return;
+
     var Q = context.requireCordovaModule('q');
     var deferral = new Q.defer();
 
@@ -24,10 +26,8 @@ module.exports = function (context) {
     var elementTree = context.requireCordovaModule('elementtree');
     var etree = elementTree.parse(contents);
     var bundleId = etree.getroot().get('id');
-    console.error('bundle id:', bundleId);
 
     var iosFolder = context.opts.cordova.project ? context.opts.cordova.project.root : path.join(context.opts.projectRoot, 'platforms/ios/');
-    console.error("iosFolder: " + iosFolder);
 
     fs.readdir(iosFolder, function (err, data) {
         var projectFolder;
@@ -367,7 +367,6 @@ module.exports = function (context) {
 
                 // write the updated project file
                 fs.writeFileSync(projectPath, pbxProject.writeSync());
-                console.error("Added Stickers Extension to " + projectName + " xcode project");
             }
 
             deferral.resolve();
@@ -395,7 +394,6 @@ module.exports = function (context) {
 
 
     });
-
 
     return deferral.promise;
 };
