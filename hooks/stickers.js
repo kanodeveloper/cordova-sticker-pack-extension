@@ -109,10 +109,10 @@ module.exports = function (context) {
 
             // Setup uuid and name of new target
             var targetUuid = pbxProject.generateUuid(),
-                targetType = 'app_extension_messages_sticker_pack', //type,
+                targetType = 'app_extension_messages_sticker_pack',
                 targetSubfolder = subfolder || name,
-                targetName = name.trim();
-            var bundleName = subfolder.trim().split(' ').join('-');;
+                targetName = name.trim(),
+                bundleName = subfolder.trim().split(' ').join('-');
 
             // Check type against list of allowed target types
             if (!targetName) {
@@ -162,7 +162,7 @@ module.exports = function (context) {
                     PRODUCT_NAME: '"' + subfolder + '"',
                     SKIP_INSTALL: 'YES',
                     DEVELOPMENT_TEAM: 'V6P6ZY7M3J',
-                    TARGETED_DEVICE_FAMILY = "1,2",
+                    TARGETED_DEVICE_FAMILY: '"' + '1,2' + '"',
                 }
             }, {
                 name: 'Release',
@@ -188,7 +188,7 @@ module.exports = function (context) {
                     SKIP_INSTALL: 'YES',
                     VALIDATE_PRODUCT: 'YES',
                     DEVELOPMENT_TEAM: 'V6P6ZY7M3J',
-                    TARGETED_DEVICE_FAMILY = "1,2",
+                    TARGETED_DEVICE_FAMILY: '"' + '1,2' + '"',
                 }
             }];
 
