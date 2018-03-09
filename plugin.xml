@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
         id="cordova-sticker-pack-extension-ka"
-        version="1.0.5">
+        version="1.0.6">
 
   <name>iMessage Sticker Pack Extension</name>
   <author>Hernan Zhou</author>
@@ -17,7 +17,10 @@
   <platform name="ios">
     <config-file target="config.xml" parent="/*">
     </config-file>
-    <hook type="after_plugin_install" src="hooks/after_plugin_add.js" />
+    <hook type="before_platform_add" src="hooks/before_plugin_add.js" />
+    <hook type="after_platform_add" src="hooks/after_plugin_add.js" />
+
     <hook type="before_plugin_install" src="hooks/before_plugin_add.js" />
+    <hook type="after_plugin_install" src="hooks/after_plugin_add.js" />
   </platform>
 </plugin>
