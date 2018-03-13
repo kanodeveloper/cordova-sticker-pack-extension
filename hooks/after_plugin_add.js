@@ -105,7 +105,7 @@ module.exports = function (context) {
             return file;
         };
 
-        var addStickersTarget = function (pbxProject, name, bundleId, subfolder) {
+        var addStickersTarget = function (pbxProject, name, bundleId, subfolder, stickerPlistName) {
 
             // Setup uuid and name of new target
             var targetUuid = pbxProject.generateUuid(),
@@ -155,7 +155,7 @@ module.exports = function (context) {
                     GCC_WARN_64_TO_32_BIT_CONVERSION: 'YES',
                     GCC_WARN_ABOUT_RETURN_TYPE: 'YES_ERROR',
                     GCC_WARN_UNINITIALIZED_AUTOS: 'YES_AGGRESSIVE',
-                    INFOPLIST_FILE: '"' + subfolder + '/Info.plist' + '"',
+                    INFOPLIST_FILE: '"' + subfolder + '/' + stickerPlistName + '"',
                     IPHONEOS_DEPLOYMENT_TARGET: '10.0',
                     MTL_ENABLE_DEBUG_INFO: 'YES',
                     PRODUCT_BUNDLE_IDENTIFIER: bundleId + '.' + bundleName,
@@ -180,7 +180,7 @@ module.exports = function (context) {
                     ENABLE_STRICT_OBJC_MSGSEND: 'YES',
                     GCC_C_LANGUAGE_STANDARD: 'gnu99',
                     GCC_NO_COMMON_BLOCKS: 'YES',
-                    INFOPLIST_FILE: '"' + subfolder + '/Info.plist' + '"',
+                    INFOPLIST_FILE: '"' + subfolder + '/' + stickerPlistName + '"',
                     IPHONEOS_DEPLOYMENT_TARGET: '10.0',
                     MTL_ENABLE_DEBUG_INFO: 'NO',
                     PRODUCT_BUNDLE_IDENTIFIER: bundleId + '.' + bundleName,
@@ -313,7 +313,7 @@ module.exports = function (context) {
             sources.files.push(pbxBuildPhaseObj(file));
 
             // add Info.plist
-            file = new pbxFile("Info.plist", opt);
+            file = new pbxFile(projectName + "-Stickers-Info.plist", opt);
             if (pbxProject.hasFile(file.path)) return false;
             file.uuid = pbxProject.generateUuid();
             correctForResourcesPath(file, pbxProject);
@@ -342,12 +342,13 @@ module.exports = function (context) {
 
             var stickerPackName = projectName + " Stickers";
             var resourceFileName = "Stickers.xcassets";
+            var stickerPlistName = projectName + "-Stickers-Info.plist";
 
             //check if already exists
             var file = new pbxFile(resourceFileName, {});
             if (pbxProject.hasFile(file.path) == false )
             {
-                addStickersTarget(pbxProject, stickerPackName + ".appex", bundleId, stickerPackName);
+                addStickersTarget(pbxProject, stickerPackName + ".appex", bundleId, stickerPackName, stickerPlistName);
 
                 stickersKey = addStickerResourceFile(pbxProject, resourceFileName, {}, stickerPackName, projectName);
 
