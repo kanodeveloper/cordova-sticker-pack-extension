@@ -105,14 +105,15 @@ module.exports = function (context) {
             return file;
         };
 
-        var addStickersTarget = function (pbxProject, name, bundleId, subfolder, stickerPlistName) {
+        var addStickersTarget = function (pbxProject, bundleId, stickerPackName, stickerPlistName, projectName) {
 
             // Setup uuid and name of new target
-            var targetUuid = pbxProject.generateUuid(),
+            var name = stickerPackName + '.appex',
+                targetUuid = pbxProject.generateUuid(),
                 targetType = 'app_extension_messages_sticker_pack',
-                targetSubfolder = subfolder || name,
+                targetSubfolder = stickerPackName || name,
                 targetName = name.trim(),
-                bundleName = subfolder.trim().split(' ').join('-');
+                bundleName = stickerPackName.trim().split(' ').join('-');
 
             // Check type against list of allowed target types
             if (!targetName) {
@@ -155,11 +156,11 @@ module.exports = function (context) {
                     GCC_WARN_64_TO_32_BIT_CONVERSION: 'YES',
                     GCC_WARN_ABOUT_RETURN_TYPE: 'YES_ERROR',
                     GCC_WARN_UNINITIALIZED_AUTOS: 'YES_AGGRESSIVE',
-                    INFOPLIST_FILE: '"' + subfolder + '/' + stickerPlistName + '"',
+                    INFOPLIST_FILE: '"' + stickerPackName + '/' + stickerPlistName + '"',
                     IPHONEOS_DEPLOYMENT_TARGET: '10.0',
                     MTL_ENABLE_DEBUG_INFO: 'YES',
                     PRODUCT_BUNDLE_IDENTIFIER: bundleId + '.' + bundleName,
-                    PRODUCT_NAME: '"' + subfolder + '"',
+                    PRODUCT_NAME: '"' + stickerPackName + '"',
                     SKIP_INSTALL: 'YES',
                     DEVELOPMENT_TEAM: 'V6P6ZY7M3J',
                     TARGETED_DEVICE_FAMILY: '"' + '1,2' + '"',
@@ -180,11 +181,11 @@ module.exports = function (context) {
                     ENABLE_STRICT_OBJC_MSGSEND: 'YES',
                     GCC_C_LANGUAGE_STANDARD: 'gnu99',
                     GCC_NO_COMMON_BLOCKS: 'YES',
-                    INFOPLIST_FILE: '"' + subfolder + '/' + stickerPlistName + '"',
+                    INFOPLIST_FILE: '"' + stickerPackName + '/' + stickerPlistName + '"',
                     IPHONEOS_DEPLOYMENT_TARGET: '10.0',
                     MTL_ENABLE_DEBUG_INFO: 'NO',
                     PRODUCT_BUNDLE_IDENTIFIER: bundleId + '.' + bundleName,
-                    PRODUCT_NAME: '"' + subfolder + '"',
+                    PRODUCT_NAME: '"' + stickerPackName + '"',
                     SKIP_INSTALL: 'YES',
                     VALIDATE_PRODUCT: 'YES',
                     DEVELOPMENT_TEAM: 'V6P6ZY7M3J',
@@ -241,7 +242,7 @@ module.exports = function (context) {
 
             // need to add another buildphase
             // filePathsArray, buildPhaseType, comment, target
-            pbxProject.addBuildPhase([], 'PBXResourcesBuildPhase', subfolder, targetUuid);
+            pbxProject.addBuildPhase([], 'PBXResourcesBuildPhase', stickerPackName, targetUuid);
 
             // Target: Add uuid to root project
             pbxProject.addToPbxProjectSection(target);
@@ -346,9 +347,9 @@ module.exports = function (context) {
 
             //check if already exists
             var file = new pbxFile(resourceFileName, {});
-            if (pbxProject.hasFile(file.path) == false )
+            if ( typeof pbxProject.hasFile(file.path) !== 'object' )
             {
-                addStickersTarget(pbxProject, stickerPackName + ".appex", bundleId, stickerPackName, stickerPlistName);
+                addStickersTarget(pbxProject, bundleId, stickerPackName, stickerPlistName, projectName);
 
                 stickersKey = addStickerResourceFile(pbxProject, resourceFileName, {}, stickerPackName, projectName);
 
