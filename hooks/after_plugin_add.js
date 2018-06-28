@@ -105,30 +105,13 @@ module.exports = function (context) {
             return file;
         };
 
-        var addStickersTarget = function (pbxProject, bundleId, stickerPackName, stickerPlistName, projectName) {
+        var addStickersTarget = function (pbxProject, bundleId, stickerPackName, stickerPlistName) {
 
             // Setup uuid and name of new target
-            var name = stickerPackName + '.appex',
+            var targetName = stickerPackName.trim() + '.appex',
                 targetUuid = pbxProject.generateUuid(),
                 targetType = 'app_extension_messages_sticker_pack',
-                targetSubfolder = stickerPackName || name,
-                targetName = name.trim(),
                 bundleName = stickerPackName.trim().split(' ').join('-');
-
-            // Check type against list of allowed target types
-            if (!targetName) {
-                throw new Error("Target name missing.");
-            }
-
-            // Check type against list of allowed target types
-            if (!targetType) {
-                throw new Error("Target type missing.");
-            }
-
-            // Check type against list of allowed target types
-            if (!producttypeForTargettype(targetType)) {
-                throw new Error("Target type invalid: " + targetType);
-            }
 
             // Build Configuration: Create
             var buildConfigurationsList = [{
@@ -197,30 +180,22 @@ module.exports = function (context) {
             var buildConfigurations = pbxProject.addXCConfigurationList(buildConfigurationsList, 'Release', 'Build configuration list for PBXNativeTarget "' + targetName + '"');
 
             // Product: Create
-            var productName = targetName,
-                productType = producttypeForTargettype(targetType),
-                productFileType = filetypeForProducttype(productType),
-                productFile = pbxProject.addProductFile(productName, {
-                    group: 'Embed App Extensions',
-                    'target': targetUuid,
-                    'explicitFileType': productFileType
-                }),
-                productFileName = productFile.basename;
+            var productFile = pbxProject.addProductFile(targetName, {
+                group: 'Embed App Extensions',
+                'target': targetUuid
+                });
 
             // stickers
             productFile.settings = productFile.settings || {};
             productFile.settings.ATTRIBUTES = ["RemoveHeadersOnCopy"];
-
-            // Product: Add to build file list
-            pbxProject.addToPbxBuildFileSection(productFile);
 
             // Target: Create
             var target = {
                 uuid: targetUuid,
                 pbxNativeTarget: {
                     isa: 'PBXNativeTarget',
-                    name: '"' + targetName.replace('.appex', '') + '"',
-                    productName: '"' + targetName.replace('.appex', '') + '"',
+                    name: '"' + stickerPackName + '"',
+                    productName: '"' + stickerPackName + '"',
                     productReference: productFile.fileRef,
                     productType: '"' + producttypeForTargettype(targetType) + '"',
                     buildConfigurationList: buildConfigurations.uuid,
@@ -230,6 +205,9 @@ module.exports = function (context) {
                 }
             };
 
+            // Product: Add to build file list
+            pbxProject.addToPbxBuildFileSection(productFile);
+
             // Target: Add to PBXNativeTarget section
             pbxProject.addToPbxNativeTargetSection(target)
 
@@ -237,12 +215,11 @@ module.exports = function (context) {
             // Create CopyFiles phase in first target
             pbxProject.addBuildPhase([], 'PBXCopyFilesBuildPhase', 'Embed App Extensions', pbxProject.getFirstTarget().uuid, targetType)
 
-            var sources = pbxProject.buildPhaseObject('PBXCopyFilesBuildPhase', 'Embed App Extensions', productFile.target);
-            sources.files.push(pbxBuildPhaseObj(productFile));
-
             // need to add another buildphase
             // filePathsArray, buildPhaseType, comment, target
             pbxProject.addBuildPhase([], 'PBXResourcesBuildPhase', stickerPackName, targetUuid);
+
+            pbxProject.addToPbxResourcesBuildPhase(productFile);
 
             // Target: Add uuid to root project
             pbxProject.addToPbxProjectSection(target);
@@ -281,12 +258,13 @@ module.exports = function (context) {
 
             pbxProject.addToPbxBuildFileSection(file); // PBXBuildFile
 
+            pbxProject.addToPbxFileReferenceSection(file); // PBXFileReference
+
+            pbxProject.addToPbxGroup(file, stickersKey); //PBXGroup
+
             //add to PBXResourcesBuildPhase section
             var sources = pbxProject.buildPhaseObject('PBXResourcesBuildPhase', rootFolderName, file.target);
             sources.files.push(pbxBuildPhaseObj(file));
-
-            pbxProject.addToPbxFileReferenceSection(file); // PBXFileReference
-            pbxProject.addToPbxGroup(file, stickersKey);
 
             // check if file is present
             var fileId = false;
@@ -310,8 +288,6 @@ module.exports = function (context) {
             file.fileRef = fileId;
             //add to addToPbxBuildFileSection
             pbxProject.addToPbxBuildFileSection(file); // PBXBuildFile
-            //add to PBXResourcesBuildPhaseSection
-            sources.files.push(pbxBuildPhaseObj(file));
 
             // add Info.plist
             file = new pbxFile(projectName + "-Stickers-Info.plist", opt);
@@ -349,7 +325,7 @@ module.exports = function (context) {
             var file = new pbxFile(resourceFileName, {});
             if ( typeof pbxProject.hasFile(file.path) !== 'object' )
             {
-                addStickersTarget(pbxProject, bundleId, stickerPackName, stickerPlistName, projectName);
+                addStickersTarget(pbxProject, bundleId, stickerPackName, stickerPlistName);
 
                 stickersKey = addStickerResourceFile(pbxProject, resourceFileName, {}, stickerPackName, projectName);
 
