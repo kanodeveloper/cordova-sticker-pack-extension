@@ -46,16 +46,8 @@ module.exports = function (context) {
             return util.format("%s in %s", file.basename, file.group);
         };
 
-        var correctForPluginsPath = function(file, project) {
-            return correctForPath(file, project, 'Plugins');
-        };
-
         var correctForResourcesPath = function(file, project) {
             return correctForPath(file, project, 'Resources');
-        };
-
-        var correctForFrameworksPath = function(file, project) {
-            return correctForPath(file, project, 'Frameworks');
         };
 
         var correctForPath = function(file, project, group) {
@@ -81,6 +73,7 @@ module.exports = function (context) {
                 buildSettings: {
                     ALWAYS_SEARCH_USER_PATHS: 'NO',
                     ASSETCATALOG_COMPILER_APPICON_NAME: '"iMessage App Icon"',
+                    ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME: '""',
                     CLANG_ANALYZER_NONNULL: 'YES',
                     CLANG_CXX_LANGUAGE_STANDARD: '"gnu++0x"',
                     CLANG_CXX_LIBRARY: '"libc++"',
@@ -115,6 +108,7 @@ module.exports = function (context) {
                 buildSettings: {
                     ALWAYS_SEARCH_USER_PATHS: 'NO',
                     ASSETCATALOG_COMPILER_APPICON_NAME: '"iMessage App Icon"',
+                    ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME: '""',
                     CLANG_ANALYZER_NONNULL: 'YES',
                     CLANG_CXX_LANGUAGE_STANDARD: '"gnu++0x"',
                     CLANG_CXX_LIBRARY: '"libc++"',
@@ -145,10 +139,6 @@ module.exports = function (context) {
                 group: 'Embed App Extensions',
                 'target': targetUuid
                 });
-
-            // stickers
-            //productFile.settings = productFile.settings || {};
-            //productFile.settings.ATTRIBUTES = ["RemoveHeadersOnCopy"];
 
             // Target: Create
             var target = {
@@ -183,15 +173,13 @@ module.exports = function (context) {
             // filePathsArray, buildPhaseType, comment, target
             pbxProject.addBuildPhase([], 'PBXResourcesBuildPhase', stickerPackName, targetUuid);
 
-            //pbxProject.addToPbxResourcesBuildPhase(productFile);
-
             // Target: Add uuid to root project
             pbxProject.addToPbxProjectSection(target);
 
             // Target: Add dependency for this target to first (main) target
             pbxProject.addTargetDependency(pbxProject.getFirstTarget().uuid, [target.uuid]);
 
-            // ?
+            //
             pbxProject.pbxProjectSection()[pbxProject.getFirstProject()['uuid']]['attributes']['TargetAttributes'] = {};
             pbxProject.pbxProjectSection()[pbxProject.getFirstProject()['uuid']]['attributes']['TargetAttributes'][target.uuid] = {
                 CreatedOnToolsVersion: '8.0',
@@ -269,8 +257,6 @@ module.exports = function (context) {
             var pbxProject;
             var projectPath;
             var configGroups;
-            var config;
-            var resourcesFolderPath = path.join(iosFolder, projectName, 'Resources');
 
             projectPath = path.join(projectFolder, 'project.pbxproj');
 
