@@ -73,7 +73,6 @@ module.exports = function (context) {
                 buildSettings: {
                     ALWAYS_SEARCH_USER_PATHS: 'NO',
                     ASSETCATALOG_COMPILER_APPICON_NAME: '"iMessage App Icon"',
-                    ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME: '""',
                     CLANG_ANALYZER_NONNULL: 'YES',
                     CLANG_CXX_LANGUAGE_STANDARD: '"gnu++0x"',
                     CLANG_CXX_LIBRARY: '"libc++"',
@@ -108,7 +107,6 @@ module.exports = function (context) {
                 buildSettings: {
                     ALWAYS_SEARCH_USER_PATHS: 'NO',
                     ASSETCATALOG_COMPILER_APPICON_NAME: '"iMessage App Icon"',
-                    ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME: '""',
                     CLANG_ANALYZER_NONNULL: 'YES',
                     CLANG_CXX_LANGUAGE_STANDARD: '"gnu++0x"',
                     CLANG_CXX_LIBRARY: '"libc++"',
@@ -194,14 +192,12 @@ module.exports = function (context) {
         var addStickerResourceFile = function (pbxProject, path, opt, rootFolderName, projectName) {
             opt = opt || {};
 
-            var file;
+            var file, sources;
 
             file = new pbxFile(path, opt);
             if (pbxProject.hasFile(file.path)) return false;
-
             file.uuid = pbxProject.generateUuid();
             file.target = opt ? opt.target : undefined;
-
             correctForResourcesPath(file, pbxProject);
             file.fileRef = pbxProject.generateUuid();
 
@@ -215,7 +211,7 @@ module.exports = function (context) {
             pbxProject.addToPbxGroup(file, stickersKey); //PBXGroup
 
             //add to PBXResourcesBuildPhase section
-            var sources = pbxProject.buildPhaseObject('PBXResourcesBuildPhase', rootFolderName, file.target);
+            sources = pbxProject.buildPhaseObject('PBXResourcesBuildPhase', rootFolderName, file.target);
             sources.files.push(pbxBuildPhaseObj(file));
 
             // check if file is present
@@ -235,11 +231,16 @@ module.exports = function (context) {
 
             // add Images.xcassets
             file = new pbxFile("Images.xcassets", opt);
+            if (pbxProject.hasFile(file.path)) return false;
             file.uuid = pbxProject.generateUuid();
+            file.target = opt ? opt.target : undefined;
             correctForResourcesPath(file, pbxProject);
             file.fileRef = fileId;
-            //add to addToPbxBuildFileSection
+
             pbxProject.addToPbxBuildFileSection(file); // PBXBuildFile
+
+            sources = pbxProject.buildPhaseObject('PBXResourcesBuildPhase', rootFolderName, file.target);
+            sources.files.push(pbxBuildPhaseObj(file));
 
             // add Info.plist
             file = new pbxFile(projectName + "-Stickers-Info.plist", opt);
