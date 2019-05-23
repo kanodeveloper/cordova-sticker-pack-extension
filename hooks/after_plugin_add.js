@@ -3,6 +3,8 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var pbxFile = require('./lib/pbxFile');
+var elementTree = require('elementtree');
+var Q = require('node-q');
 
 module.exports = function (context) {
 
@@ -10,7 +12,6 @@ module.exports = function (context) {
 
     if (platforms.indexOf("ios") === -1) return;
 
-    var Q = context.requireCordovaModule('q');
     var deferral = new Q.defer();
 
     if (context.opts.cordova.platforms.indexOf('ios') < 0) {
@@ -23,7 +24,6 @@ module.exports = function (context) {
         // BOM
         contents = contents.substring(contents.indexOf('<'));
     }
-    var elementTree = context.requireCordovaModule('elementtree');
     var etree = elementTree.parse(contents);
     var bundleId = etree.getroot().get('id');
 

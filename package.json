@@ -1,6 +1,6 @@
 {
   "name": "cordova-sticker-pack-extension-ka",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Adds a Sticker Pack Extension to your Cordova project",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -27,5 +27,9 @@
   "bugs": {
     "url": "https://github.com/LuckyKat/cordova-sticker-pack-extension/issues"
   },
-  "homepage": "https://github.com/LuckyKat/cordova-sticker-pack-extension"
+  "homepage": "https://github.com/LuckyKat/cordova-sticker-pack-extension",
+  "devDependencies": {
+    "node-q": "^2.0.0",
+    "elementtree": "^0.1.7"
+  }
 }

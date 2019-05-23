@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var Q = require('node-q');
 
 var copyFileSync = function (source, target) {
 
@@ -38,7 +39,6 @@ var copyFolderRecursiveSync = function (source, target) {
 };
 
 module.exports = function (context) {
-    var Q = context.requireCordovaModule('q');
     var deferral = new Q.defer();
 
     var iosFolder = context.opts.cordova.project ? context.opts.cordova.project.root : path.join(context.opts.projectRoot, 'platforms/ios/');
