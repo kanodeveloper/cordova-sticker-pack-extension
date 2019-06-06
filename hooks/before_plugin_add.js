@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var Q = require('node-q');
+var Q = require('q');
 
 var copyFileSync = function (source, target) {
 
@@ -39,7 +39,7 @@ var copyFolderRecursiveSync = function (source, target) {
 };
 
 module.exports = function (context) {
-    var deferral = new Q.defer();
+    var deferral = Q.defer();
 
     var iosFolder = context.opts.cordova.project ? context.opts.cordova.project.root : path.join(context.opts.projectRoot, 'platforms/ios/');
     fs.readdir(iosFolder, function (err, data) {
@@ -59,11 +59,11 @@ module.exports = function (context) {
         if (!projectFolder || !projectName) {
             throw new Error("Could not find an .xcodeproj folder in: " + iosFolder);
         }
+
         srcFolder = path.join(context.opts.projectRoot, projectName + ' Stickers/');
         if (!fs.existsSync(srcFolder)) {
-            throw new Error('Missing stickers asset folder. Should be named "/<PROJECTNAME>Stickers/ and place it in the root folder of your cordova project"');
+            throw new Error('Missing stickers asset folder which Should be named "/'+projectName+' Stickers/ and place it in the root folder of your cordova project, skipping sticker install"');
         }
-
 
         // copy stickers folder
         copyFolderRecursiveSync(

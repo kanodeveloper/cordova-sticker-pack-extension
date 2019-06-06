@@ -4,7 +4,7 @@ var path = require('path');
 var util = require('util');
 var pbxFile = require('./lib/pbxFile');
 var elementTree = require('elementtree');
-var Q = require('node-q');
+var Q = require('q');
 
 module.exports = function (context) {
 
@@ -12,7 +12,7 @@ module.exports = function (context) {
 
     if (platforms.indexOf("ios") === -1) return;
 
-    var deferral = new Q.defer();
+    var deferral = Q.defer();
 
     if (context.opts.cordova.platforms.indexOf('ios') < 0) {
         throw new Error('This plugin expects the ios platform to exist.');
