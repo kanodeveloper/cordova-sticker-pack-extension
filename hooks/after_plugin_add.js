@@ -243,7 +243,7 @@ module.exports = function (context) {
             sources.files.push(pbxBuildPhaseObj(file));
 
             // add Info.plist
-            file = new pbxFile(projectName + "-Stickers-Info.plist", opt);
+            file = new pbxFile(projectName + " Stickers-Info.plist", opt);
             if (pbxProject.hasFile(file.path)) return false;
             file.uuid = pbxProject.generateUuid();
             correctForResourcesPath(file, pbxProject);
@@ -270,7 +270,7 @@ module.exports = function (context) {
 
             var stickerPackName = projectName + " Stickers";
             var resourceFileName = "Stickers.xcassets";
-            var stickerPlistName = projectName + "-Stickers-Info.plist";
+            var stickerPlistName = projectName + " Stickers-Info.plist";
 
             //check if already exists
             var file = new pbxFile(resourceFileName, {});
